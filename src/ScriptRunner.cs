@@ -12,8 +12,8 @@ public class ScriptRunner
 {
     static public void Main ()
     {
-        dynamic data = JObject.Parse(File.ReadAllText(@"data.json"));
-        dynamic config = JObject.Parse(File.ReadAllText(@"config.json"));
+        dynamic data = JToken.Parse(File.ReadAllText(@"data.json"));
+        dynamic config = JToken.Parse(File.ReadAllText(@"config.json"));
         dynamic output = new JObject();
         Script script = new Script();
         script.Execute(data, config, output);

@@ -1,0 +1,20 @@
+{
+    "name": "processmaker/docker-executor-csharp",
+    "friendly_name": "CSharp Docker Executor",
+    "description": "CSharp script executor for processmaker 4",
+    "version": "0.0.1",
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "ProcessMaker\\Package\\DockerExecutorCSharp\\": "src",
+            "ProcessMaker\\ScriptRunners\\": "src/ScriptRunners"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ProcessMaker\\Package\\DockerExecutorCSharp\\DockerExecutorCSharpServiceProvider"
+            ]
+        }
+    }
+}
