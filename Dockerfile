@@ -8,7 +8,7 @@ COPY ./src /opt/executor
 WORKDIR /opt/executor
 
 # SDK is not public yet
-# RUN if [ ! -d "sdk-csharp" ]; then wget -O sdk.tar.gz https://github.com/ProcessMaker/package-csharp/tarball/master; fi
+RUN if [ ! -d "sdk-csharp" ]; then wget -O sdk.tar.gz https://github.com/ProcessMaker/package-csharp/tarball/master; fi
 
 RUN mv sdk-csharp ../
 WORKDIR /opt/sdk-csharp
