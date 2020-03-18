@@ -1,4 +1,4 @@
-# executor-php
+# executor-csharp
 Script Task Executor Engine with Mono Runtime to support C#
 
 This docker image provides a sandboxed protected environment to run custom C# "scripts" that are written in ProcessMaker BPM.

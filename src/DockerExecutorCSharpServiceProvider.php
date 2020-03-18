@@ -4,14 +4,12 @@ namespace ProcessMaker\Package\DockerExecutorCSharp;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use ProcessMaker\Traits\PluginServiceProviderTrait;
-use ProcessMaker\Package\Packages\Events\PackageEvent;
-use ProcessMaker\Package\WebEntry\Listeners\PackageListener;
 
 class DockerExecutorCSharpServiceProvider extends ServiceProvider
 {
     use PluginServiceProviderTrait;
 
-    const version = '0.0.1'; // Required for PluginServiceProviderTrait
+    const version = '1.0.0'; // Required for PluginServiceProviderTrait
 
     public function register()
     {
@@ -28,7 +26,20 @@ class DockerExecutorCSharpServiceProvider extends ServiceProvider
     public function boot()
     {
         \Artisan::command('docker-executor-csharp:install', function () {
-            // nothing to do here
+            // Copy the default custom dockerfile to the storage folder
+            copy(
+                __DIR__ . '/../storage/docker-build-config/Dockerfile-csharp',
+                storage_path("docker-build-config/Dockerfile-csharp")
+            );
+
+            // Restart the workers so they know about the new supported language
+            \Artisan::call('horizon:terminate');
+
+            // Build the base image that `executor-instance-csharp` inherits from
+            system("docker build -t processmaker4/executor-csharp:latest " . __DIR__ . '/..');
+
+            // Build the instance image. This is the same as if you were to build it from the admin UI
+            \Artisan::call('processmaker:build-script-executor csharp');
         });
         
         $config = [
@@ -38,11 +49,12 @@ class DockerExecutorCSharpServiceProvider extends ServiceProvider
             'image' => env('SCRIPTS_CSHARP_IMAGE', 'processmaker4/executor-csharp'),
             'options' => [
                 'packageName' => "ProcessMakerSDK",
-            ]
+            ],
+            'init_dockerfile' => "FROM processmaker4/executor-csharp:latest\nARG SDK_DIR\n",
         ];
         config(['script-runners.csharp' => $config]);
 
-        $this->app['events']->listen(PackageEvent::class, PackageListener::class);
+        // $this->app['events']->listen(PackageEvent::class, PackageListener::class);
 
         // Complete the plugin booting
         $this->completePluginBoot();
