@@ -1,4 +1,3 @@
-# Bring in from Mono docker image
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2
 RUN apt update
 

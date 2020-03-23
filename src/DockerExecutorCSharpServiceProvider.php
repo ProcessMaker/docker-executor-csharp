@@ -4,6 +4,7 @@ namespace ProcessMaker\Package\DockerExecutorCSharp;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use ProcessMaker\Traits\PluginServiceProviderTrait;
+use ProcessMaker\Models\ScriptExecutor;
 
 class DockerExecutorCSharpServiceProvider extends ServiceProvider
 {
@@ -26,31 +27,37 @@ class DockerExecutorCSharpServiceProvider extends ServiceProvider
     public function boot()
     {
         \Artisan::command('docker-executor-csharp:install', function () {
-            // Copy the default custom dockerfile to the storage folder
-            copy(
-                __DIR__ . '/../storage/docker-build-config/Dockerfile-csharp',
-                storage_path("docker-build-config/Dockerfile-csharp")
-            );
-
-            // Restart the workers so they know about the new supported language
-            \Artisan::call('horizon:terminate');
-
-            // Build the base image that `executor-instance-csharp` inherits from
-            system("docker build -t processmaker4/executor-csharp:latest " . __DIR__ . '/..');
+            $scriptExecutor = ScriptExecutor::install([
+                'language' => 'csharp',
+                'title' => 'C# Executor',
+                'description' => 'Default C# Executor',
+            ]);
 
             // Build the instance image. This is the same as if you were to build it from the admin UI
             \Artisan::call('processmaker:build-script-executor csharp');
+            
+            // Restart the workers so they know about the new supported language
+            \Artisan::call('horizon:terminate');
         });
         
         $config = [
             'name' => 'C#',
             'runner' => 'CSharpRunner',
             'mime_type' => 'text/plain',
-            'image' => env('SCRIPTS_CSHARP_IMAGE', 'processmaker4/executor-csharp'),
             'options' => [
                 'packageName' => "ProcessMakerSDK",
             ],
-            'init_dockerfile' => "FROM processmaker4/executor-csharp:latest\nARG SDK_DIR\n",
+            'init_dockerfile' => [
+                "ARG SDK_DIR",
+                'COPY $SDK_DIR /opt/sdk-csharp',
+                'WORKDIR /opt/sdk-csharp',
+                'RUN chmod 755 build.sh',
+                '# OpenAPI Builder for csharp is broken',
+                '# RUN ./build.sh',
+                'WORKDIR /opt/executor',
+                '# RUN mv ../sdk-csharp/bin . && rm -rf ../sdk-csharp',
+            ],
+            'package_path' => __DIR__ . '/..',
         ];
         config(['script-runners.csharp' => $config]);
 
