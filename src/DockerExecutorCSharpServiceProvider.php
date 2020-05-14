@@ -59,6 +59,7 @@ class DockerExecutorCSharpServiceProvider extends ServiceProvider
             ],
             'package_path' => __DIR__ . '/..',
             'package_version' => self::version,
+            'sdk' => false,
         ];
         config(['script-runners.csharp' => $config]);
 
