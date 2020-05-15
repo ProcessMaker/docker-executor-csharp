@@ -52,14 +52,12 @@ class DockerExecutorCSharpServiceProvider extends ServiceProvider
                 'COPY $SDK_DIR /opt/sdk-csharp',
                 'WORKDIR /opt/sdk-csharp',
                 'RUN chmod 755 build.sh',
-                '# OpenAPI Builder for csharp is broken',
-                '# RUN ./build.sh',
+                'RUN ./build.sh',
                 'WORKDIR /opt/executor',
-                '# RUN mv ../sdk-csharp/bin . && rm -rf ../sdk-csharp',
+                'RUN mv ../sdk-csharp/bin . && rm -rf ../sdk-csharp',
             ],
             'package_path' => __DIR__ . '/..',
             'package_version' => self::version,
-            'sdk' => false,
         ];
         config(['script-runners.csharp' => $config]);
 

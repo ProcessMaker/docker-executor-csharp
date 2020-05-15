@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using ProcessMakerSDK.Client;
  
 /*
 Our quick and simple .net c sharp script runner that prepares reading 
@@ -15,15 +16,15 @@ public class ScriptRunner
         string apiHost = Environment.GetEnvironmentVariable("API_HOST");
         string apiToken = Environment.GetEnvironmentVariable("API_TOKEN");
 
-        // Configuration apiConfig = Configuration.Default;
-        // apiConfig.BasePath = apiHost;
-        // apiConfig.AccessToken = apiToken;
+        Configuration apiConfig = Configuration.Default;
+        apiConfig.BasePath = apiHost;
+        apiConfig.AccessToken = apiToken;
 
         dynamic data = JToken.Parse(File.ReadAllText(@"data.json"));
         dynamic config = JToken.Parse(File.ReadAllText(@"config.json"));
         dynamic output = new JObject();
         Script script = new Script();
-        script.Execute(data, config, output);
+        script.Execute(data, config, output, apiConfig);
         File.WriteAllText(@"output.json", output.ToString());
     }
 }
