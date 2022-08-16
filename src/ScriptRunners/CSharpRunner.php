@@ -17,6 +17,7 @@ class CSharpRunner extends Base
         $dockerConfig['image'] = config('script-runners.csharp.image');
         $dockerConfig['command'] = 'dotnet run';
         $dockerConfig['inputs']['/opt/executor/Script.cs'] = $code;
+
         return $dockerConfig;
     }
 }
