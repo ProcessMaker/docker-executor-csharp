@@ -1,10 +1,11 @@
 <?php
+
 namespace ProcessMaker\Package\DockerExecutorCSharp;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use ProcessMaker\Traits\PluginServiceProviderTrait;
 use ProcessMaker\Models\ScriptExecutor;
+use ProcessMaker\Traits\PluginServiceProviderTrait;
 
 class DockerExecutorCSharpServiceProvider extends ServiceProvider
 {
@@ -35,20 +36,20 @@ class DockerExecutorCSharpServiceProvider extends ServiceProvider
 
             // Build the instance image. This is the same as if you were to build it from the admin UI
             \Artisan::call('processmaker:build-script-executor csharp');
-            
+
             // Restart the workers so they know about the new supported language
             \Artisan::call('horizon:terminate');
         });
-        
+
         $config = [
             'name' => 'C#',
             'runner' => 'CSharpRunner',
             'mime_type' => 'text/plain',
             'options' => [
-                'packageName' => "ProcessMakerSDK",
+                'packageName' => 'ProcessMakerSDK',
             ],
             'init_dockerfile' => [
-                "ARG SDK_DIR",
+                'ARG SDK_DIR',
                 'COPY $SDK_DIR /opt/sdk-csharp',
                 'WORKDIR /opt/sdk-csharp',
                 'RUN chmod 755 build.sh',
