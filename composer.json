@@ -2,7 +2,7 @@
     "name": "processmaker/docker-executor-csharp",
     "friendly_name": "CSharp Docker Executor",
     "description": "CSharp script executor for processmaker 4",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
