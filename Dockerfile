@@ -1,5 +1,8 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2
-RUN apt update
+RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list \
+    && sed -i 's/security.debian.org/archive.debian.org/g' /etc/apt/sources.list \
+    && sed -i '/stretch-updates/d' /etc/apt/sources.list \
+    && apt update
 
 # Copy over our .NET C# solution skeleton
 COPY ./src /opt/executor
