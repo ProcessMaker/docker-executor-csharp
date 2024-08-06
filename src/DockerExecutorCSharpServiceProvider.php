@@ -28,6 +28,8 @@ class DockerExecutorCSharpServiceProvider extends ServiceProvider
     public function boot()
     {
         \Artisan::command('docker-executor-csharp:install', function () {
+            // disable executor installation
+            return;
             $scriptExecutor = ScriptExecutor::install([
                 'language' => 'csharp',
                 'title' => 'C# Executor',
