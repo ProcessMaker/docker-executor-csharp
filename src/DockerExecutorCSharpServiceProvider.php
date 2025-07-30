@@ -11,7 +11,7 @@ class DockerExecutorCSharpServiceProvider extends ServiceProvider
 {
     use PluginServiceProviderTrait;
 
-    const version = '1.0.0'; // Required for PluginServiceProviderTrait
+    public const version = '1.0.3'; // Required for PluginServiceProviderTrait
 
     public function register()
     {
@@ -27,7 +27,7 @@ class DockerExecutorCSharpServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        \Artisan::command('docker-executor-csharp:install', function () {
+        \Artisan::command('docker-executor-csharp:install {--no-build : Skip building the script executor image}', function () {
             $scriptExecutor = ScriptExecutor::install([
                 'language' => 'csharp',
                 'title' => 'C# Executor',
@@ -35,7 +35,10 @@ class DockerExecutorCSharpServiceProvider extends ServiceProvider
             ]);
 
             // Build the instance image. This is the same as if you were to build it from the admin UI
-            \Artisan::call('processmaker:build-script-executor csharp');
+            // Skip building the image if the --no-build option is passed
+            if (!$this->option('no-build')) {
+                \Artisan::call('processmaker:build-script-executor csharp');
+            }
 
             // Restart the workers so they know about the new supported language
             \Artisan::call('horizon:terminate');
